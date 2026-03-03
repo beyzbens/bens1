@@ -214,6 +214,30 @@ Schedule:Compact,
     60.0;                    !- Field 4
 
 Schedule:Compact,
+    DHW_UseTargetTemp_Sch,   !- Name
+    Temperature,             !- Schedule Type Limits Name
+    Through: 12/31,          !- Field 1
+    For: AllDays,            !- Field 2
+    Until: 24:00,            !- Field 3
+    40.0;                    !- Field 4
+
+Schedule:Compact,
+    DHW_HotSupplyTemp_Sch,   !- Name
+    Temperature,             !- Schedule Type Limits Name
+    Through: 12/31,          !- Field 1
+    For: AllDays,            !- Field 2
+    Until: 24:00,            !- Field 3
+    52.0;                    !- Field 4
+
+Schedule:Compact,
+    DHW_ColdSupplyTemp_Sch,  !- Name
+    Temperature,             !- Schedule Type Limits Name
+    Through: 12/31,          !- Field 1
+    For: AllDays,            !- Field 2
+    Until: 24:00,            !- Field 3
+    15.0;                    !- Field 4
+
+Schedule:Compact,
     Occupancy_Sch,           !- Name
     Fraction,                !- Schedule Type Limits Name
     Through: 12/31,          !- Field 1
@@ -1962,7 +1986,7 @@ ZoneHVAC:FourPipeFanCoil,
     autosize,                !- Maximum Supply Air Flow Rate {m3/s}
     0.33,                    !- Low Speed Supply Air Flow Ratio
     0.66,                    !- Medium Speed Supply Air Flow Ratio
-    0.010,                   !- Maximum Outdoor Air Flow Rate {m3/s}
+    0.012,                   !- Maximum Outdoor Air Flow Rate {m3/s}
     AlwaysOn,                !- Outdoor Air Schedule Name
     N_Liv_Mix,               !- Air Inlet Node Name
     N_Liv_In,                !- Air Outlet Node Name
@@ -2014,7 +2038,7 @@ ZoneHVAC:FourPipeFanCoil,
     autosize,                !- Maximum Supply Air Flow Rate {m3/s}
     0.33,                    !- Low Speed Supply Air Flow Ratio
     0.66,                    !- Medium Speed Supply Air Flow Ratio
-    0.010,                   !- Maximum Outdoor Air Flow Rate {m3/s}
+    0.012,                   !- Maximum Outdoor Air Flow Rate {m3/s}
     AlwaysOn,                !- Outdoor Air Schedule Name
     N_Bed_Mix,               !- Air Inlet Node Name
     N_Bed_In,                !- Air Outlet Node Name
@@ -2040,7 +2064,7 @@ ZoneHVAC:FourPipeFanCoil,
     autosize,                !- Maximum Supply Air Flow Rate {m3/s}
     0.33,                    !- Low Speed Supply Air Flow Ratio
     0.66,                    !- Medium Speed Supply Air Flow Ratio
-    0.006,                   !- Maximum Outdoor Air Flow Rate {m3/s}
+    0.0075,                  !- Maximum Outdoor Air Flow Rate {m3/s}
     AlwaysOn,                !- Outdoor Air Schedule Name
     N_Bath_Mix,              !- Air Inlet Node Name
     N_Bath_In,               !- Air Outlet Node Name
@@ -2066,7 +2090,7 @@ ZoneHVAC:FourPipeFanCoil,
     autosize,                !- Maximum Supply Air Flow Rate {m3/s}
     0.33,                    !- Low Speed Supply Air Flow Ratio
     0.66,                    !- Medium Speed Supply Air Flow Ratio
-    0.004,                   !- Maximum Outdoor Air Flow Rate {m3/s}
+    0.0045,                  !- Maximum Outdoor Air Flow Rate {m3/s}
     AlwaysOn,                !- Outdoor Air Schedule Name
     N_Sto_Mix,               !- Air Inlet Node Name
     N_Sto_In,                !- Air Outlet Node Name
@@ -2599,17 +2623,17 @@ Branch,
     DHW_Pump,                !- Component 1 Name
     DHW_Sup_In,              !- Component 1 Inlet Node Name
     DHW_P_Out,               !- Component 1 Outlet Node Name
-    Pipe:Adiabatic,          !- Component 2 Object Type
-    DHW_Supply_Bypass,       !- Component 2 Name
+    WaterHeater:Mixed,       !- Component 2 Object Type
+    DHW_Tank,                !- Component 2 Name
     DHW_P_Out,               !- Component 2 Inlet Node Name
     DHW_Sup_Out;             !- Component 2 Outlet Node Name
 
-! --- Demand side: the DHW tank must be on a plant branch ---
+! --- Demand side: DHW draws are represented by WaterUse:Connections ---
 Branch,
     DHW_D_Br,                !- Name
     ,                        !- Pressure Drop Curve Name
-    WaterHeater:Mixed,       !- Component 1 Object Type
-    DHW_Tank,                !- Component 1 Name
+    WaterUse:Connections,    !- Component 1 Object Type
+    DHW_C,                   !- Component 1 Name
     DHW_In_N,                !- Component 1 Inlet Node Name
     DHW_Out_N;               !- Component 1 Outlet Node Name
 
@@ -2898,8 +2922,8 @@ WaterHeater:Mixed,
     ,                        !- Peak Use Flow Rate {m3/s}
     ,                        !- Use Flow Rate Fraction Schedule Name
     ,                        !- Cold Water Supply Temperature Schedule Name
-    DHW_In_N,                !- Use Side Inlet Node Name
-    DHW_Out_N,               !- Use Side Outlet Node Name
+    DHW_P_Out,               !- Use Side Inlet Node Name
+    DHW_Sup_Out,             !- Use Side Outlet Node Name
     1;                       !- Use Side Effectiveness
 
 
@@ -2989,8 +3013,8 @@ PlantLoop,
 ! --- Minimal operation scheme for supply side (just keeps loop consistent) ---
 PlantEquipmentList,
     DHW_E,                   !- Name
-    Pipe:Adiabatic,          !- Equipment 1 Object Type
-    DHW_Supply_Bypass;       !- Equipment 1 Name
+    WaterHeater:Mixed,       !- Equipment 1 Object Type
+    DHW_Tank;                !- Equipment 1 Name
 
 PlantEquipmentList,
     HW_E,                    !- Name
@@ -3075,25 +3099,31 @@ WaterUse:Equipment,
     DHW_T_B,                 !- Name
     DHW,                     !- End-Use Subcategory
     0.00008,                 !- Peak Flow Rate {m3/s}
-    AlwaysOn;                !- Flow Rate Fraction Schedule Name
+    AlwaysOn,                !- Flow Rate Fraction Schedule Name
+    DHW_UseTargetTemp_Sch,   !- Target Temperature Schedule Name
+    DHW_HotSupplyTemp_Sch,   !- Hot Water Supply Temperature Schedule Name
+    DHW_ColdSupplyTemp_Sch;  !- Cold Water Supply Temperature Schedule Name
 
 WaterUse:Equipment,
     DH_T_K,                  !- Name
     DHW,                     !- End-Use Subcategory
     0.00006,                 !- Peak Flow Rate {m3/s}
-    AlwaysOn;                !- Flow Rate Fraction Schedule Name
+    AlwaysOn,                !- Flow Rate Fraction Schedule Name
+    DHW_UseTargetTemp_Sch,   !- Target Temperature Schedule Name
+    DHW_HotSupplyTemp_Sch,   !- Hot Water Supply Temperature Schedule Name
+    DHW_ColdSupplyTemp_Sch;  !- Cold Water Supply Temperature Schedule Name
 
 
 !-   ===========  ALL OBJECTS IN CLASS: WATERUSE:CONNECTIONS ===========
 
 WaterUse:Connections,
     DHW_C,                   !- Name
-    DHW_Out_N,               !- Inlet Node Name
-    DHW_In_N,                !- Outlet Node Name
+    DHW_In_N,                !- Inlet Node Name
+    DHW_Out_N,               !- Outlet Node Name
     ,                        !- Supply Water Storage Tank Name
     ,                        !- Reclamation Water Storage Tank Name
-    ,                        !- Hot Water Supply Temperature Schedule Name
-    ,                        !- Cold Water Supply Temperature Schedule Name
+    DHW_HotSupplyTemp_Sch,   !- Hot Water Supply Temperature Schedule Name
+    DHW_ColdSupplyTemp_Sch,  !- Cold Water Supply Temperature Schedule Name
     None,                    !- Drain Water Heat Exchanger Type
     Plant,                   !- Drain Water Heat Exchanger Destination
     ,                        !- Drain Water Heat Exchanger U-Factor Times Area {W/K}

@@ -1855,7 +1855,7 @@ Fan:OnOff,
     autosize,                !- Maximum Flow Rate {m3/s}
     0.8,                     !- Motor Efficiency
     1,                       !- Motor In Airstream Fraction
-    N_Liv_Mix,               !- Air Inlet Node Name
+    N_Liv_OAOut,             !- Air Inlet Node Name
     N_Liv_FOut;              !- Air Outlet Node Name
 
 Fan:OnOff,
@@ -1866,7 +1866,7 @@ Fan:OnOff,
     autosize,                !- Maximum Flow Rate {m3/s}
     0.8,                     !- Motor Efficiency
     1,                       !- Motor In Airstream Fraction
-    N_Kit_Mix,               !- Air Inlet Node Name
+    N_Kit_OAOut,             !- Air Inlet Node Name
     N_Kit_FOut;              !- Air Outlet Node Name
 
 Fan:OnOff,
@@ -1877,7 +1877,7 @@ Fan:OnOff,
     autosize,                !- Maximum Flow Rate {m3/s}
     0.8,                     !- Motor Efficiency
     1,                       !- Motor In Airstream Fraction
-    N_Bed_Mix,               !- Air Inlet Node Name
+    N_Bed_OAOut,             !- Air Inlet Node Name
     N_Bed_FOut;              !- Air Outlet Node Name
 
 Fan:OnOff,
@@ -1888,7 +1888,7 @@ Fan:OnOff,
     autosize,                !- Maximum Flow Rate {m3/s}
     0.8,                     !- Motor Efficiency
     1,                       !- Motor In Airstream Fraction
-    N_Bath_Mix,              !- Air Inlet Node Name
+    N_Bath_OAOut,            !- Air Inlet Node Name
     N_Bath_FOut;             !- Air Outlet Node Name
 
 Fan:OnOff,
@@ -1899,7 +1899,7 @@ Fan:OnOff,
     autosize,                !- Maximum Flow Rate {m3/s}
     0.8,                     !- Motor Efficiency
     1,                       !- Motor In Airstream Fraction
-    N_Sto_Mix,               !- Air Inlet Node Name
+    N_Sto_OAOut,             !- Air Inlet Node Name
     N_Sto_FOut;              !- Air Outlet Node Name
 
 
@@ -2083,38 +2083,38 @@ Coil:Heating:Water,
 
 OutdoorAir:Mixer,
     Mix_Liv,                 !- Name
-    N_Liv_Mix,               !- Mixed Air Node Name
+    N_Liv_OAOut,             !- Mixed Air Node Name
     OA_Liv,                  !- Outdoor Air Stream Node Name
     N_Liv_Rel,               !- Relief Air Stream Node Name
-    N_Liv_Ret;               !- Return Air Stream Node Name
+    N_Liv_Mix;               !- Return Air Stream Node Name
 
 OutdoorAir:Mixer,
     Mix_Kit,                 !- Name
-    N_Kit_Mix,               !- Mixed Air Node Name
+    N_Kit_OAOut,             !- Mixed Air Node Name
     OA_Kit,                  !- Outdoor Air Stream Node Name
     N_Kit_Rel,               !- Relief Air Stream Node Name
-    N_Kit_Ret;               !- Return Air Stream Node Name
+    N_Kit_Mix;               !- Return Air Stream Node Name
 
 OutdoorAir:Mixer,
     Mix_Bed,                 !- Name
-    N_Bed_Mix,               !- Mixed Air Node Name
+    N_Bed_OAOut,             !- Mixed Air Node Name
     OA_Bed,                  !- Outdoor Air Stream Node Name
     N_Bed_Rel,               !- Relief Air Stream Node Name
-    N_Bed_Ret;               !- Return Air Stream Node Name
+    N_Bed_Mix;               !- Return Air Stream Node Name
 
 OutdoorAir:Mixer,
     Mix_Bath,                !- Name
-    N_Bath_Mix,              !- Mixed Air Node Name
+    N_Bath_OAOut,            !- Mixed Air Node Name
     OA_Bath,                 !- Outdoor Air Stream Node Name
     N_Bath_Rel,              !- Relief Air Stream Node Name
-    N_Bath_Ret;              !- Return Air Stream Node Name
+    N_Bath_Mix;              !- Return Air Stream Node Name
 
 OutdoorAir:Mixer,
     Mix_Sto,                 !- Name
-    N_Sto_Mix,               !- Mixed Air Node Name
+    N_Sto_OAOut,             !- Mixed Air Node Name
     OA_Sto,                  !- Outdoor Air Stream Node Name
     N_Sto_Rel,               !- Relief Air Stream Node Name
-    N_Sto_Ret;               !- Return Air Stream Node Name
+    N_Sto_Mix;               !- Return Air Stream Node Name
 
 
 !-   ===========  ALL OBJECTS IN CLASS: BRANCH ===========
@@ -2267,14 +2267,37 @@ Branch,
     DHW_P_Out,               !- Component 2 Inlet Node Name
     DHW_Sup_Out;             !- Component 2 Outlet Node Name
 
-! --- Demand side: the DHW tank must be on a plant branch ---
 Branch,
-    DHW_D_Br,                !- Name
+    DHW_D_I,                 !- Name
+    ,                        !- Pressure Drop Curve Name
+    Pipe:Adiabatic,          !- Component 1 Object Type
+    DHW_Dem_Pipe_I,          !- Component 1 Name
+    DHW_Dem_In,              !- Component 1 Inlet Node Name
+    DHW_D_SplOut;            !- Component 1 Outlet Node Name
+
+Branch,
+    DHW_D_Tank_Br,           !- Name
     ,                        !- Pressure Drop Curve Name
     WaterHeater:Mixed,       !- Component 1 Object Type
     DHW_Tank,                !- Component 1 Name
-    DHW_In_N,                !- Component 1 Inlet Node Name
-    DHW_Out_N;               !- Component 1 Outlet Node Name
+    DHW_Tank_In,             !- Component 1 Inlet Node Name
+    DHW_Tank_Out;            !- Component 1 Outlet Node Name
+
+Branch,
+    DHW_D_WU_Br,             !- Name
+    ,                        !- Pressure Drop Curve Name
+    WaterUse:Connections,    !- Component 1 Object Type
+    DHW_C,                   !- Component 1 Name
+    DHW_WU_In,               !- Component 1 Inlet Node Name
+    DHW_WU_Out;              !- Component 1 Outlet Node Name
+
+Branch,
+    DHW_D_O,                 !- Name
+    ,                        !- Pressure Drop Curve Name
+    Pipe:Adiabatic,          !- Component 1 Object Type
+    DHW_Dem_Pipe_O,          !- Component 1 Name
+    DHW_D_MixOut,            !- Component 1 Inlet Node Name
+    DHW_Dem_Out;             !- Component 1 Outlet Node Name
 
 
 !-   ===========  ALL OBJECTS IN CLASS: BRANCHLIST ===========
@@ -2313,7 +2336,10 @@ BranchList,
 
 BranchList,
     DHW_Dem_BrL,             !- Name
-    DHW_D_Br;                !- Branch 1 Name
+    DHW_D_I,                 !- Branch 1 Name
+    DHW_D_Tank_Br,           !- Branch 2 Name
+    DHW_D_WU_Br,             !- Branch 3 Name
+    DHW_D_O;                 !- Branch 4 Name
 
 
 !-   ===========  ALL OBJECTS IN CLASS: CONNECTOR:SPLITTER ===========
@@ -2374,6 +2400,25 @@ ConnectorList,
     Connector:Mixer,         !- Connector 2 Object Type
     CW_M;                    !- Connector 2 Name
 
+Connector:Splitter,
+    DHW_Spl,                 !- Name
+    DHW_D_I,                 !- Inlet Branch Name
+    DHW_D_Tank_Br,           !- Outlet Branch 1 Name
+    DHW_D_WU_Br;             !- Outlet Branch 2 Name
+
+Connector:Mixer,
+    DHW_Mix,                 !- Name
+    DHW_D_O,                 !- Outlet Branch Name
+    DHW_D_Tank_Br,           !- Inlet Branch 1 Name
+    DHW_D_WU_Br;             !- Inlet Branch 2 Name
+
+ConnectorList,
+    DHW_Dem_Con,             !- Name
+    Connector:Splitter,      !- Connector 1 Object Type
+    DHW_Spl,                 !- Connector 1 Name
+    Connector:Mixer,         !- Connector 2 Object Type
+    DHW_Mix;                 !- Connector 2 Name
+
 
 !-   ===========  ALL OBJECTS IN CLASS: OUTDOORAIR:NODELIST ===========
 
@@ -2382,7 +2427,8 @@ OutdoorAir:NodeList,
     OA_Kit,                  !- Node or NodeList Name 2
     OA_Bed,                  !- Node or NodeList Name 3
     OA_Bath,                 !- Node or NodeList Name 4
-    OA_Sto;                  !- Node or NodeList Name 5
+    OA_Sto,                  !- Node or NodeList Name 5
+    OA_Chiller;              !- Node or NodeList Name 6
 
 
 !-   ===========  ALL OBJECTS IN CLASS: PIPE:ADIABATIC ===========
@@ -2411,6 +2457,16 @@ Pipe:Adiabatic,
     DHW_Supply_Bypass,       !- Name
     DHW_P_Out,               !- Inlet Node Name
     DHW_Sup_Out;             !- Outlet Node Name
+
+Pipe:Adiabatic,
+    DHW_Dem_Pipe_I,          !- Name
+    DHW_Dem_In,              !- Inlet Node Name
+    DHW_D_SplOut;            !- Outlet Node Name
+
+Pipe:Adiabatic,
+    DHW_Dem_Pipe_O,          !- Name
+    DHW_D_MixOut,            !- Inlet Node Name
+    DHW_Dem_Out;             !- Outlet Node Name
 
 
 !-   ===========  ALL OBJECTS IN CLASS: PUMP:VARIABLESPEED ===========
@@ -2484,8 +2540,8 @@ Chiller:Electric:EIR,
     0.25,                    !- Minimum Unloading Ratio
     CW_P_Out,                !- Chilled Water Inlet Node Name
     CW_Sup_Out,              !- Chilled Water Outlet Node Name
-    OA_Liv,                  !- Condenser Inlet Node Name
-    OA_Liv,                  !- Condenser Outlet Node Name
+    OA_Chiller,              !- Condenser Inlet Node Name
+    OA_Chiller_Out,          !- Condenser Outlet Node Name
     AirCooled,               !- Condenser Type
     0.0,                     !- Condenser Fan Power Ratio {W/W}
     1.0,                     !- Fraction of Compressor Electric Consumption Rejected by Condenser
@@ -2561,8 +2617,8 @@ WaterHeater:Mixed,
     ,                        !- Peak Use Flow Rate {m3/s}
     ,                        !- Use Flow Rate Fraction Schedule Name
     ,                        !- Cold Water Supply Temperature Schedule Name
-    DHW_In_N,                !- Use Side Inlet Node Name
-    DHW_Out_N,               !- Use Side Outlet Node Name
+    DHW_Tank_In,             !- Use Side Inlet Node Name
+    DHW_Tank_Out,            !- Use Side Outlet Node Name
     1;                       !- Use Side Effectiveness
 
 
@@ -2635,10 +2691,10 @@ PlantLoop,
     DHW_Sup_Out,             !- Plant Side Outlet Node Name
     DHW_Sup_BrL,             !- Plant Side Branch List Name
     ,                        !- Plant Side Connector List Name
-    DHW_In_N,                !- Demand Side Inlet Node Name
-    DHW_Out_N,               !- Demand Side Outlet Node Name
+    DHW_Dem_In,              !- Demand Side Inlet Node Name
+    DHW_Dem_Out,             !- Demand Side Outlet Node Name
     DHW_Dem_BrL,             !- Demand Side Branch List Name
-    ,                        !- Demand Side Connector List Name
+    DHW_Dem_Con,             !- Demand Side Connector List Name
     SequentialLoad,          !- Load Distribution Scheme
     ,                        !- Availability Manager List Name
     SingleSetpoint,          !- Plant Loop Demand Calculation Scheme
@@ -2751,8 +2807,8 @@ WaterUse:Equipment,
 
 WaterUse:Connections,
     DHW_C,                   !- Name
-    DHW_Out_N,               !- Inlet Node Name
-    DHW_In_N,                !- Outlet Node Name
+    DHW_WU_In,               !- Inlet Node Name
+    DHW_WU_Out,              !- Outlet Node Name
     ,                        !- Supply Water Storage Tank Name
     ,                        !- Reclamation Water Storage Tank Name
     ,                        !- Hot Water Supply Temperature Schedule Name

@@ -1940,12 +1940,6 @@ Sizing:Plant,
     7,                       !- Design Loop Exit Temperature {C}
     10;                      !- Loop Design Temperature Difference {deltaC}
 
-Sizing:Plant,
-    DHW_Loop,                !- Plant or Condenser Loop Name
-    Heating,                 !- Loop Type
-    60,                      !- Design Loop Exit Temperature {C}
-    10;                      !- Loop Design Temperature Difference {deltaC}
-
 
 !-   ===========  ALL OBJECTS IN CLASS: ZONECONTROL:THERMOSTAT ===========
 
@@ -2504,7 +2498,7 @@ Branch,
     HW_Sup_In,               !- Component 1 Inlet Node Name
     HW_P_Out,                !- Component 1 Outlet Node Name
     WaterHeater:Mixed,       !- Component 2 Object Type
-    BufferTank,              !- Component 2 Name
+    DHW_Tank,                !- Component 2 Name
     HW_P_Out,                !- Component 2 Inlet Node Name
     HW_Sup_Out;              !- Component 2 Outlet Node Name
 
@@ -2563,6 +2557,14 @@ Branch,
     HC_Bath,                 !- Component 1 Name
     HW_Bath_In,              !- Component 1 Inlet Node Name
     HW_Bath_Out;             !- Component 1 Outlet Node Name
+
+Branch,
+    HW_B_DHW,                !- Name
+    ,                        !- Pressure Drop Curve Name
+    WaterUse:Connections,    !- Component 1 Object Type
+    DHW_C,                   !- Component 1 Name
+    DHW_In_N,                !- Component 1 Inlet Node Name
+    DHW_Out_N;               !- Component 1 Outlet Node Name
 
 Branch,
     CW_S_Br,                 !- Name
@@ -2632,28 +2634,6 @@ Branch,
     CW_Bath_In,              !- Component 1 Inlet Node Name
     CW_Bath_Out;             !- Component 1 Outlet Node Name
 
-Branch,
-    DHW_S_Br,                !- Name
-    ,                        !- Pressure Drop Curve Name
-    Pump:VariableSpeed,      !- Component 1 Object Type
-    DHW_Pump,                !- Component 1 Name
-    DHW_Sup_In,              !- Component 1 Inlet Node Name
-    DHW_P_Out,               !- Component 1 Outlet Node Name
-    WaterHeater:Mixed,       !- Component 2 Object Type
-    DHW_Tank,                !- Component 2 Name
-    DHW_P_Out,               !- Component 2 Inlet Node Name
-    DHW_Sup_Out;             !- Component 2 Outlet Node Name
-
-! --- Demand side: DHW draws are represented by WaterUse:Connections ---
-Branch,
-    DHW_D_Br,                !- Name
-    ,                        !- Pressure Drop Curve Name
-    WaterUse:Connections,    !- Component 1 Object Type
-    DHW_C,                   !- Component 1 Name
-    DHW_In_N,                !- Component 1 Inlet Node Name
-    DHW_Out_N;               !- Component 1 Outlet Node Name
-
-
 !-   ===========  ALL OBJECTS IN CLASS: BRANCHLIST ===========
 
 BranchList,
@@ -2668,7 +2648,8 @@ BranchList,
     HW_B_B,                  !- Branch 4 Name
     HW_B_S,                  !- Branch 5 Name
     HW_B_BA,                 !- Branch 6 Name
-    HW_D_O;                  !- Branch 7 Name
+    HW_B_DHW,                !- Branch 7 Name
+    HW_D_O;                  !- Branch 8 Name
 
 BranchList,
     CW_Sup_BrL,              !- Name
@@ -2684,15 +2665,6 @@ BranchList,
     CW_B_BA,                 !- Branch 6 Name
     CW_D_O;                  !- Branch 7 Name
 
-BranchList,
-    DHW_Sup_BrL,             !- Name
-    DHW_S_Br;                !- Branch 1 Name
-
-BranchList,
-    DHW_Dem_BrL,             !- Name
-    DHW_D_Br;                !- Branch 1 Name
-
-
 !-   ===========  ALL OBJECTS IN CLASS: CONNECTOR:SPLITTER ===========
 
 Connector:Splitter,
@@ -2702,7 +2674,8 @@ Connector:Splitter,
     HW_B_K,                  !- Outlet Branch 2 Name
     HW_B_B,                  !- Outlet Branch 3 Name
     HW_B_S,                  !- Outlet Branch 4 Name
-    HW_B_BA;                 !- Outlet Branch 5 Name
+    HW_B_BA,                 !- Outlet Branch 5 Name
+    HW_B_DHW;                !- Outlet Branch 6 Name
 
 Connector:Splitter,
     CW_S,                    !- Name
@@ -2723,7 +2696,8 @@ Connector:Mixer,
     HW_B_K,                  !- Inlet Branch 2 Name
     HW_B_B,                  !- Inlet Branch 3 Name
     HW_B_S,                  !- Inlet Branch 4 Name
-    HW_B_BA;                 !- Inlet Branch 5 Name
+    HW_B_BA,                 !- Inlet Branch 5 Name
+    HW_B_DHW;                !- Inlet Branch 6 Name
 
 Connector:Mixer,
     CW_M,                    !- Name
@@ -2819,24 +2793,6 @@ Pump:VariableSpeed,
     ,                        !- Design Minimum Flow Rate {m3/s}
     Intermittent;            !- Pump Control Type
 
-! --- Supply side components (pump + bypass pipe) ---
-Pump:VariableSpeed,
-    DHW_Pump,                !- Name
-    DHW_Sup_In,              !- Inlet Node Name
-    DHW_P_Out,               !- Outlet Node Name
-    autosize,                !- Design Maximum Flow Rate {m3/s}
-    179352,                  !- Design Pump Head {Pa}
-    autosize,                !- Design Power Consumption {W}
-    0.9,                     !- Motor Efficiency
-    0,                       !- Fraction of Motor Inefficiencies to Fluid Stream
-    0,                       !- Coefficient 1 of the Part Load Performance Curve
-    1,                       !- Coefficient 2 of the Part Load Performance Curve
-    0,                       !- Coefficient 3 of the Part Load Performance Curve
-    0,                       !- Coefficient 4 of the Part Load Performance Curve
-    ,                        !- Design Minimum Flow Rate {m3/s}
-    Intermittent;            !- Pump Control Type
-
-
 !-   ===========  ALL OBJECTS IN CLASS: CHILLER:ELECTRIC:EIR ===========
 
 Chiller:Electric:EIR,
@@ -2868,44 +2824,9 @@ Chiller:Electric:EIR,
 !-   ===========  ALL OBJECTS IN CLASS: WATERHEATER:MIXED ===========
 
 WaterHeater:Mixed,
-    BufferTank,              !- Name
-    0.5,                     !- Tank Volume {m3}
-    HW_SupplyTemp_Sch,       !- Setpoint Temperature Schedule Name
-    2,                       !- Deadband Temperature Difference {deltaC}
-    90,                      !- Maximum Temperature Limit {C}
-    Cycle,                   !- Heater Control Type
-    15000,                   !- Heater Maximum Capacity {W}
-    0,                       !- Heater Minimum Capacity {W}
-    0,                       !- Heater Ignition Minimum Flow Rate {m3/s}
-    0,                       !- Heater Ignition Delay {s}
-    Electricity,             !- Heater Fuel Type
-    1,                       !- Heater Thermal Efficiency
-    ,                        !- Part Load Factor Curve Name
-    0,                       !- Off Cycle Parasitic Fuel Consumption Rate {W}
-    Electricity,             !- Off Cycle Parasitic Fuel Type
-    0,                       !- Off Cycle Parasitic Heat Fraction to Tank
-    0,                       !- On Cycle Parasitic Fuel Consumption Rate {W}
-    Electricity,             !- On Cycle Parasitic Fuel Type
-    0,                       !- On Cycle Parasitic Heat Fraction to Tank
-    Zone,                    !- Ambient Temperature Indicator
-    ,                        !- Ambient Temperature Schedule Name
-    UF_Storage_Room,         !- Ambient Temperature Zone Name
-    ,                        !- Ambient Temperature Outdoor Air Node Name
-    1,                       !- Off Cycle Loss Coefficient to Ambient Temperature {W/K}
-    1,                       !- Off Cycle Loss Fraction to Zone
-    1,                       !- On Cycle Loss Coefficient to Ambient Temperature {W/K}
-    1,                       !- On Cycle Loss Fraction to Zone
-    ,                        !- Peak Use Flow Rate {m3/s}
-    ,                        !- Use Flow Rate Fraction Schedule Name
-    ,                        !- Cold Water Supply Temperature Schedule Name
-    HW_P_Out,                !- Use Side Inlet Node Name
-    HW_Sup_Out,              !- Use Side Outlet Node Name
-    1;                       !- Use Side Effectiveness
-
-WaterHeater:Mixed,
     DHW_Tank,                !- Name
     0.2,                     !- Tank Volume {m3}
-    DHW_TSET_SCH,            !- Setpoint Temperature Schedule Name
+    HW_SupplyTemp_Sch,       !- Setpoint Temperature Schedule Name
     3.0,                     !- Deadband Temperature Difference {deltaC}
     60.0,                    !- Maximum Temperature Limit {C}
     Cycle,                   !- Heater Control Type
@@ -2933,8 +2854,8 @@ WaterHeater:Mixed,
     ,                        !- Peak Use Flow Rate {m3/s}
     ,                        !- Use Flow Rate Fraction Schedule Name
     ,                        !- Cold Water Supply Temperature Schedule Name
-    DHW_P_Out,               !- Use Side Inlet Node Name
-    DHW_Sup_Out,             !- Use Side Outlet Node Name
+    HW_P_Out,                !- Use Side Inlet Node Name
+    HW_Sup_Out,              !- Use Side Outlet Node Name
     1;                       !- Use Side Effectiveness
 
 
@@ -2992,45 +2913,12 @@ PlantLoop,
     None,                    !- Pressure Simulation Type
     2;                       !- Loop Circulation Time {minutes}
 
-PlantLoop,
-    DHW_Loop,                !- Name
-    Water,                   !- Fluid Type
-    ,                        !- User Defined Fluid Type
-    DHW_Op,                  !- Plant Equipment Operation Scheme Name
-    DHW_Sup_Out,             !- Loop Temperature Setpoint Node Name
-    80,                      !- Maximum Loop Temperature {C}
-    0,                       !- Minimum Loop Temperature {C}
-    autosize,                !- Maximum Loop Flow Rate {m3/s}
-    0,                       !- Minimum Loop Flow Rate {m3/s}
-    ,                        !- Plant Loop Volume {m3}
-    DHW_Sup_In,              !- Plant Side Inlet Node Name
-    DHW_Sup_Out,             !- Plant Side Outlet Node Name
-    DHW_Sup_BrL,             !- Plant Side Branch List Name
-    ,                        !- Plant Side Connector List Name
-    DHW_In_N,                !- Demand Side Inlet Node Name
-    DHW_Out_N,               !- Demand Side Outlet Node Name
-    DHW_Dem_BrL,             !- Demand Side Branch List Name
-    ,                        !- Demand Side Connector List Name
-    SequentialLoad,          !- Load Distribution Scheme
-    ,                        !- Availability Manager List Name
-    SingleSetpoint,          !- Plant Loop Demand Calculation Scheme
-    None,                    !- Common Pipe Simulation
-    None,                    !- Pressure Simulation Type
-    2;                       !- Loop Circulation Time {minutes}
-
-
 !-   ===========  ALL OBJECTS IN CLASS: PLANTEQUIPMENTLIST ===========
-
-! --- Minimal operation scheme for supply side (just keeps loop consistent) ---
-PlantEquipmentList,
-    DHW_E,                   !- Name
-    WaterHeater:Mixed,       !- Equipment 1 Object Type
-    DHW_Tank;                !- Equipment 1 Name
 
 PlantEquipmentList,
     HW_E,                    !- Name
     WaterHeater:Mixed,       !- Equipment 1 Object Type
-    BufferTank;              !- Equipment 1 Name
+    DHW_Tank;                !- Equipment 1 Name
 
 PlantEquipmentList,
     CW_E,                    !- Name
@@ -3050,12 +2938,6 @@ PlantEquipmentOperation:CoolingLoad,
 !-   ===========  ALL OBJECTS IN CLASS: PLANTEQUIPMENTOPERATION:HEATINGLOAD ===========
 
 PlantEquipmentOperation:HeatingLoad,
-    DHW_L,                   !- Name
-    0,                       !- Load Range 1 Lower Limit {W}
-    10000000,                !- Load Range 1 Upper Limit {W}
-    DHW_E;                   !- Range 1 Equipment List Name
-
-PlantEquipmentOperation:HeatingLoad,
     HW_L,                    !- Name
     0,                       !- Load Range 1 Lower Limit {W}
     10000000,                !- Load Range 1 Upper Limit {W}
@@ -3063,12 +2945,6 @@ PlantEquipmentOperation:HeatingLoad,
 
 
 !-   ===========  ALL OBJECTS IN CLASS: PLANTEQUIPMENTOPERATIONSCHEMES ===========
-
-PlantEquipmentOperationSchemes,
-    DHW_Op,                  !- Name
-    PlantEquipmentOperation:HeatingLoad,  !- Control Scheme 1 Object Type
-    DHW_L,                   !- Control Scheme 1 Name
-    AlwaysOn;                !- Control Scheme 1 Schedule Name
 
 PlantEquipmentOperationSchemes,
     HW_Op,                   !- Name
@@ -3084,12 +2960,6 @@ PlantEquipmentOperationSchemes,
 
 
 !-   ===========  ALL OBJECTS IN CLASS: SETPOINTMANAGER:SCHEDULED ===========
-
-SetpointManager:Scheduled,
-    DHW_SPM,                 !- Name
-    Temperature,             !- Control Variable
-    DHW_LoopTemp_Sch,        !- Schedule Name
-    DHW_Sup_Out;             !- Setpoint Node or NodeList Name
 
 SetpointManager:Scheduled,
     HW_SPM,                  !- Name

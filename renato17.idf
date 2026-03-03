@@ -238,6 +238,22 @@ Schedule:Compact,
     15.0;                    !- Field 4
 
 Schedule:Compact,
+    DHW_DrawFrac_Sch,        !- Name
+    Fraction,                !- Schedule Type Limits Name
+    Through: 12/31,          !- Field 1
+    For: AllDays,            !- Field 2
+    Until: 06:00,            !- Field 3
+    0.05,                    !- Field 4
+    Until: 08:30,            !- Field 5
+    0.30,                    !- Field 6
+    Until: 18:00,            !- Field 7
+    0.08,                    !- Field 8
+    Until: 22:30,            !- Field 9
+    0.30,                    !- Field 10
+    Until: 24:00,            !- Field 11
+    0.08;                    !- Field 12
+
+Schedule:Compact,
     Occupancy_Sch,           !- Name
     Fraction,                !- Schedule Type Limits Name
     Through: 12/31,          !- Field 1
@@ -2768,11 +2784,6 @@ Pipe:Adiabatic,
     CW_M_O,                  !- Inlet Node Name
     CW_Dem_Out;              !- Outlet Node Name
 
-Pipe:Adiabatic,
-    DHW_Supply_Bypass,       !- Name
-    DHW_P_Out,               !- Inlet Node Name
-    DHW_Sup_Out;             !- Outlet Node Name
-
 
 !-   ===========  ALL OBJECTS IN CLASS: PUMP:VARIABLESPEED ===========
 
@@ -2898,7 +2909,7 @@ WaterHeater:Mixed,
     3.0,                     !- Deadband Temperature Difference {deltaC}
     60.0,                    !- Maximum Temperature Limit {C}
     Cycle,                   !- Heater Control Type
-    4500,                    !- Heater Maximum Capacity {W}
+    6000,                    !- Heater Maximum Capacity {W}
     0,                       !- Heater Minimum Capacity {W}
     0,                       !- Heater Ignition Minimum Flow Rate {m3/s}
     0,                       !- Heater Ignition Delay {s}
@@ -3099,7 +3110,7 @@ WaterUse:Equipment,
     DHW_T_B,                 !- Name
     DHW,                     !- End-Use Subcategory
     0.00008,                 !- Peak Flow Rate {m3/s}
-    AlwaysOn,                !- Flow Rate Fraction Schedule Name
+    DHW_DrawFrac_Sch,        !- Flow Rate Fraction Schedule Name
     DHW_UseTargetTemp_Sch,   !- Target Temperature Schedule Name
     DHW_HotSupplyTemp_Sch,   !- Hot Water Supply Temperature Schedule Name
     DHW_ColdSupplyTemp_Sch;  !- Cold Water Supply Temperature Schedule Name
@@ -3108,7 +3119,7 @@ WaterUse:Equipment,
     DH_T_K,                  !- Name
     DHW,                     !- End-Use Subcategory
     0.00006,                 !- Peak Flow Rate {m3/s}
-    AlwaysOn,                !- Flow Rate Fraction Schedule Name
+    DHW_DrawFrac_Sch,        !- Flow Rate Fraction Schedule Name
     DHW_UseTargetTemp_Sch,   !- Target Temperature Schedule Name
     DHW_HotSupplyTemp_Sch,   !- Hot Water Supply Temperature Schedule Name
     DHW_ColdSupplyTemp_Sch;  !- Cold Water Supply Temperature Schedule Name

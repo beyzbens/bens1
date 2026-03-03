@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<svg width="250mm" height="200mm" viewBox="0 0 2500 1500"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:ev="http://www.w3.org/2001/xml-events">
+<g font-family="Verdana" font-size="8">
+  <text x="1" y="1">ERROR - COULD NOT COMPLETE DRAWING! Examine ERR file for possible explanation. Last error message is:   "Error: No node connection found after the following object: GF_LIVING_ROOM"</text>
+  <rect x="200" y="20" width="1" height="1" style="fill:chartreuse; stroke: black;"/>1
+  <text x="202" y="14">GF_LIVING_ROOM</text>
+  <rect x="200" y="20" width="1" height="1" style="fill:salmon; stroke: black;"/>33
+  <text x="202" y="14">HC_LIV</text>
+  <rect x="200" y="20" width="1" height="1" style="fill:skyblue; stroke: black;"/>43
+  <text x="202" y="14">CC_LIV</text>
+  <rect x="200" y="20" width="1" height="1" style="fill:silver; stroke: black;"/>52
+  <text x="202" y="14">FAN_LIV</text>
+  <line x1="201" y1="20" x2="200" y2="20" style="stroke:black;"/>
+  <line x1="201" y1="20" x2="200" y2="20" style="stroke:black;"/>
+  <line x1="201" y1="20" x2="200" y2="20" style="stroke:black;"/>
+  <text x="200" y="61">Unused Non-Parent Objects:</text>
+  <text x="220" y="81">GF_KITCHEN</text>
+  <text x="220" y="101">UF_BEDROOM</text>
+  <text x="220" y="121">UF_BATHROOM</text>
+  <text x="220" y="141">UF_STORAGE_ROOM</text>
+  <text x="220" y="161">BUFFERTANK</text>
+  <text x="220" y="181">DHW_TANK</text>
+  <text x="220" y="201">OutdoorAir:NodeList</text>
+  <text x="220" y="221">OutdoorAir:NodeList</text>
+  <text x="220" y="241">OutdoorAir:NodeList</text>
+  <text x="220" y="261">OutdoorAir:NodeList</text>
+  <text x="220" y="281">OutdoorAir:NodeList</text>
+  <text x="220" y="301">DHW_SPM</text>
+  <text x="220" y="321">HW_SPM</text>
+  <text x="220" y="341">CW_SPM</text>
+  <text x="220" y="361">HW_P_I</text>
+  <text x="220" y="381">HW_P_O</text>
+  <text x="220" y="401">CW_P_I</text>
+  <text x="220" y="421">CW_P_O</text>
+  <text x="220" y="441">HW_S</text>
+  <text x="220" y="461">HW_M</text>
+  <text x="220" y="481">CW_S</text>
+  <text x="220" y="501">CW_M</text>
+  <text x="220" y="521">CHILLER</text>
+  <text x="220" y="541">CHILLER</text>
+  <text x="220" y="561">DHW_C</text>
+  <text x="220" y="581">MIX_LIV</text>
+  <text x="220" y="601">MIX_KIT</text>
+  <text x="220" y="621">MIX_BED</text>
+  <text x="220" y="641">MIX_BATH</text>
+  <text x="220" y="661">MIX_STO</text>
+  <text x="220" y="681">HC_KIT</text>
+  <text x="220" y="701">HC_KIT</text>
+  <text x="220" y="721">HC_BED</text>
+  <text x="220" y="741">HC_BED</text>
+  <text x="220" y="761">HC_BATH</text>
+  <text x="220" y="781">HC_BATH</text>
+  <text x="220" y="801">HC_STO</text>
+  <text x="220" y="821">HC_STO</text>
+  <text x="220" y="841">CC_KIT</text>
+  <text x="220" y="861">CC_KIT</text>
+  <text x="220" y="881">CC_BED</text>
+  <text x="220" y="901">CC_BED</text>
+  <text x="220" y="921">CC_BATH</text>
+  <text x="220" y="941">CC_BATH</text>
+  <text x="220" y="961">CC_STO</text>
+  <text x="220" y="981">CC_STO</text>
+  <text x="220" y="1001">FAN_KIT</text>
+  <text x="220" y="1021">FAN_BED</text>
+  <text x="220" y="1041">FAN_BATH</text>
+  <text x="220" y="1061">FAN_STO</text>
+  <text x="220" y="1081">HW_PUMP</text>
+  <text x="220" y="1101">CW_PUMP</text>
+  <text x="220" y="1121">DHW_PUMP</text>
+  <text x="220" y="1141">GF_KITCHEN</text>
+  <text x="220" y="1161">UF_BEDROOM</text>
+  <text x="220" y="1181">UF_BATHROOM</text>
+  <text x="220" y="1201">UF_STORAGE_ROOM</text>
+  <text x="200" y="1241">
+The following are not supported: objects related to controls or ZoneHVAC:IdealLoadsAirSystem</text>
+</g>
+</svg>

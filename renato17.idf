@@ -2498,9 +2498,13 @@ Branch,
     HW_Sup_In,               !- Component 1 Inlet Node Name
     HW_P_Out,                !- Component 1 Outlet Node Name
     WaterHeater:Mixed,       !- Component 2 Object Type
-    DHW_Tank,                !- Component 2 Name
+    BufferTank,              !- Component 2 Name
     HW_P_Out,                !- Component 2 Inlet Node Name
-    HW_Sup_Out;              !- Component 2 Outlet Node Name
+    HW_BT_Out,               !- Component 2 Outlet Node Name
+    WaterHeater:Mixed,       !- Component 3 Object Type
+    DHW_Tank,                !- Component 3 Name
+    HW_BT_Out,               !- Component 3 Inlet Node Name
+    HW_Sup_Out;              !- Component 3 Outlet Node Name
 
 Branch,
     HW_D_I,                  !- Name
@@ -2824,6 +2828,41 @@ Chiller:Electric:EIR,
 !-   ===========  ALL OBJECTS IN CLASS: WATERHEATER:MIXED ===========
 
 WaterHeater:Mixed,
+    BufferTank,              !- Name
+    0.5,                     !- Tank Volume {m3}
+    HW_SupplyTemp_Sch,       !- Setpoint Temperature Schedule Name
+    2,                       !- Deadband Temperature Difference {deltaC}
+    90,                      !- Maximum Temperature Limit {C}
+    Cycle,                   !- Heater Control Type
+    15000,                   !- Heater Maximum Capacity {W}
+    0,                       !- Heater Minimum Capacity {W}
+    0,                       !- Heater Ignition Minimum Flow Rate {m3/s}
+    0,                       !- Heater Ignition Delay {s}
+    Electricity,             !- Heater Fuel Type
+    1,                       !- Heater Thermal Efficiency
+    ,                        !- Part Load Factor Curve Name
+    0,                       !- Off Cycle Parasitic Fuel Consumption Rate {W}
+    Electricity,             !- Off Cycle Parasitic Fuel Type
+    0,                       !- Off Cycle Parasitic Heat Fraction to Tank
+    0,                       !- On Cycle Parasitic Fuel Consumption Rate {W}
+    Electricity,             !- On Cycle Parasitic Fuel Type
+    0,                       !- On Cycle Parasitic Heat Fraction to Tank
+    Zone,                    !- Ambient Temperature Indicator
+    ,                        !- Ambient Temperature Schedule Name
+    UF_Storage_Room,         !- Ambient Temperature Zone Name
+    ,                        !- Ambient Temperature Outdoor Air Node Name
+    1,                       !- Off Cycle Loss Coefficient to Ambient Temperature {W/K}
+    1,                       !- Off Cycle Loss Fraction to Zone
+    1,                       !- On Cycle Loss Coefficient to Ambient Temperature {W/K}
+    1,                       !- On Cycle Loss Fraction to Zone
+    ,                        !- Peak Use Flow Rate {m3/s}
+    ,                        !- Use Flow Rate Fraction Schedule Name
+    ,                        !- Cold Water Supply Temperature Schedule Name
+    HW_P_Out,                !- Use Side Inlet Node Name
+    HW_BT_Out,               !- Use Side Outlet Node Name
+    1;                       !- Use Side Effectiveness
+
+WaterHeater:Mixed,
     DHW_Tank,                !- Name
     0.2,                     !- Tank Volume {m3}
     HW_SupplyTemp_Sch,       !- Setpoint Temperature Schedule Name
@@ -2854,7 +2893,7 @@ WaterHeater:Mixed,
     ,                        !- Peak Use Flow Rate {m3/s}
     ,                        !- Use Flow Rate Fraction Schedule Name
     ,                        !- Cold Water Supply Temperature Schedule Name
-    HW_P_Out,                !- Use Side Inlet Node Name
+    HW_BT_Out,               !- Use Side Inlet Node Name
     HW_Sup_Out,              !- Use Side Outlet Node Name
     1;                       !- Use Side Effectiveness
 
@@ -2918,7 +2957,9 @@ PlantLoop,
 PlantEquipmentList,
     HW_E,                    !- Name
     WaterHeater:Mixed,       !- Equipment 1 Object Type
-    DHW_Tank;                !- Equipment 1 Name
+    BufferTank,              !- Equipment 1 Name
+    WaterHeater:Mixed,       !- Equipment 2 Object Type
+    DHW_Tank;                !- Equipment 2 Name
 
 PlantEquipmentList,
     CW_E,                    !- Name
